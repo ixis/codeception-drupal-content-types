@@ -1,5 +1,6 @@
 # Drupal Content Type Registry
 
+
 A [Codeception](http://www.codeception.com) module to provide a set of classes that encapsulate
 [Drupal](http://drupal.org) content types. This makes it much easier to quickly test standard Drupal functionality
 relating to content types, taking into account how they exist on your site.
