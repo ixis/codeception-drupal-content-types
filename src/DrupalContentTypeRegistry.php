@@ -204,17 +204,17 @@ class DrupalContentTypeRegistry extends Module
         $I->click($contentType->getSubmitSelector());
 
         // Check that the node was created properly.
-        $I->see(
-            sprintf(
-                '%s %s has been created.',
-                $contentType->getHumanName(),
-                $title
-            ),
-            '.alert-success'
+        $msg = sprintf(
+            '%s %s has been created.',
+            $contentType->getHumanName(),
+            $title
         );
-        $I->dontSee(" ", ".messages.error");
 
-        return $this->grabLastCreatedNid($I);
+        $nid = $I->grabLastCreatedNid($I);
+
+        $I->seeCreateNodeWasSuccessful($I, $msg, $nid);
+
+        return $nid;
     }
 
     /**
@@ -238,7 +238,7 @@ class DrupalContentTypeRegistry extends Module
 
             // We're now on the confirm deletion page so click that confirm button too.
             $I->click('#edit-submit');
-            $I->see('has been deleted.', ".alert-success");
+            $I->seeDeleteNodeWasSuccessful($I, $nid);
         }
     }
 
@@ -253,7 +253,7 @@ class DrupalContentTypeRegistry extends Module
      * @return mixed
      *   $nid from from node edit tab, or null if not found.
      */
-    protected function grabLastCreatedNid($I)
+    public function grabLastCreatedNid($I)
     {
         // Grab the node id from the Edit tab once the node has been saved.
         $edit_url = $I->grabAttributeFrom(Page::$nodeEditTabLinkSelector, 'href');
@@ -264,5 +264,40 @@ class DrupalContentTypeRegistry extends Module
         }
 
         return null;
+    }
+
+    /**
+     * Check a node creation was successful.
+     *
+     * This can be overridden in other modules (e.g. the Helper) if
+     * node creation success needs to be checked in other ways.
+     *
+     * @param WebInterface $I
+     *   A reference to the Actor being used.
+     * @param string $msg
+     *   The success message that should be displayed by Drupal.
+     * @param int $nid
+     *   The created nid.
+     */
+    public function seeCreateNodeWasSuccessful($I, $msg, $nid)
+    {
+        $I->see($msg, ".alert-success");
+        $I->dontSee(" ", ".messages.error");
+    }
+
+    /**
+     * Check a node deletion was successful.
+     *
+     * This can be overridden in other modules (e.g. the Helper) if
+     * node deletion success needs to be checked in other ways.
+     *
+     * @param WebInterface $I
+     *   A reference to the Actor being used.
+     * @param int $nid
+     *   The deleted nid.
+     */
+    public function seeDeleteNodeWasSuccessful($I, $nid)
+    {
+        $I->see("has been deleted.", ".alert-success");
     }
 }

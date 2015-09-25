@@ -56,11 +56,15 @@ abstract class Widget
         'Embedded'                                  => 'EmbeddedWidget',
         'File'                                      => 'FileWidget',
         'Geocode from another field'                => 'GeoWidget',
+        'Hierarchical Select'                       => 'HierarchicalWidget',
         'Image'                                     => 'ImageWidget',
+        'Language selection'                        => 'LanguageWidget',
         'Link'                                      => 'LinkWidget',
+        'Media browser'                             => 'MediaBrowserWidget',
         'Media file selector'                       => 'MediaWidget',
         'Media browser'                             => 'MediaBrowserWidget',
         'Node module element'                       => 'TextWidget',
+        'Path module form elements'                 => 'PathWidget',
         'Poll choices'                              => 'PollChoicesWidget',
         'Poll module settings'                      => 'PollSettingsWidget',
         'Pop-up calendar'                           => 'PopUpCalendarWidget',
@@ -71,6 +75,7 @@ abstract class Widget
         'Text area (multiple rows)'                 => 'TextAreaWidget',
         'Text field'                                => 'TextWidget',
         'Text area with a summary'                  => 'WysiwygWidget',
+        'Video'                                     => 'VideoWidget',
     );
 
     /**
