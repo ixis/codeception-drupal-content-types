@@ -163,7 +163,15 @@ class DrupalContentTypeRegistry extends Module
         $contentType = $this->getContentType($type);
         $title = '';
 
-        foreach ($contentType->getFields() as $field) {
+        $fields = array_merge(
+            $contentType->getFields(),
+            $contentType->getExtras()
+        );
+
+        /**
+         * @var Field[] $fields
+         */
+        foreach ($fields as $field) {
             // Skip this field if we are using a role that doesn't see it.
             if ($field->isSkipped($role)) {
                 continue;
@@ -183,20 +191,6 @@ class DrupalContentTypeRegistry extends Module
                 $field->fill($I, $data[$field->getMachine()]);
             } else {
                 $field->fill($I);
-            }
-        }
-
-        // Handle any 'extras' on the node creation form that aren't fields but still need user interaction.
-        foreach ($contentType->getExtras() as $extra) {
-            // Skip this extra if we are using a role that doesn't see it.
-            if ($extra->isSkipped($role)) {
-                continue;
-            }
-
-            if (isset($data[$extra->getMachine()])) {
-                $extra->fill($I, $data[$extra->getMachine()]);
-            } else {
-                $extra->fill($I);
             }
         }
 
