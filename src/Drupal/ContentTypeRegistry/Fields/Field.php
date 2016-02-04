@@ -459,6 +459,11 @@ class Field
             $value = $this->getTestData();
         }
 
+        if (!isset($value)) {
+            // Don't even run pre/post steps if no value is specified.
+            return;
+        }
+
         // Run any number of steps before filling the field.
         if (isset($this->preSteps)) {
             $this->executeSteps(
