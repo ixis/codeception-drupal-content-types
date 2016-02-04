@@ -380,7 +380,7 @@ class Field
         if (isset($yaml['selector'])) {
             $field->getWidget()->setSelector($yaml['selector']);
         }
-        if (isset($yaml['required']) && $yaml['required'] != 'false') {
+        if (isset($yaml['required']) && $yaml['required'] !== false) {
             $field->setRequired(true);
         }
 
