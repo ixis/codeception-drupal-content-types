@@ -141,7 +141,7 @@ class DrupalContentTypeRegistry extends Module
      *   The machine name of the content type to be created.
      * @param array $data
      *   If you want to provide custom data, the keys in this array should be the machine names of the fields to be
-     *   filled, and the values should be the data to be used. Any fields ommitted here will use any testData from
+     *   filled, and the values should be the data to be used. Any fields omitted here will use any testData from
      *   contentTypes.yml to obtain their values.
      * @param string|null $role
      *   The role being used to fill out the node edit form. This is used to determine which fields need to be skipped
