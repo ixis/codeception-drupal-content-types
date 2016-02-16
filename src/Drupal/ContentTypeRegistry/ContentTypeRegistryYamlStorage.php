@@ -100,6 +100,8 @@ class ContentTypeRegistryYamlStorage implements ContentTypeRegistryStorageInterf
         } elseif (file_exists($globalConfigFile)) {
             $yaml = file_get_contents($globalConfigFile);
             $this->config = Yaml::parse($yaml);
+        } else {
+            throw new ConfigurationException("Content Type Registry: no configuration files found.");
         }
     }
 
@@ -116,7 +118,7 @@ class ContentTypeRegistryYamlStorage implements ContentTypeRegistryStorageInterf
         $globalFields = array();
 
         if (empty($this->config)) {
-            throw new ConfigurationException("Configuration file is invalid");
+            throw new ConfigurationException("Content Type Registry: configuration file is invalid.");
         }
 
         if (isset($this->config['GlobalFields'])) {
