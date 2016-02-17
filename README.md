@@ -17,12 +17,12 @@ Install using composer, as follows:
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/chriscohen/codeception-drupal-content-types.git"
+            "url": "https://github.com/ixis/codeception-drupal-content-types.git"
         }
     ],
     "require": {
         "codeception/codeception": "2.*",
-        "chriscohen/codeception-drupal-content-types": "dev-master",
+        "ixis/codeception-drupal-content-types": "1.3.*",
     },
 }
 ```
