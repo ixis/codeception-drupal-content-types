@@ -22,7 +22,7 @@ Install using composer, as follows:
     ],
     "require": {
         "codeception/codeception": "2.*",
-        "ixis/codeception-drupal-content-types": "1.3.*",
+        "ixis/codeception-drupal-content-types": "~1.4",
     },
 }
 ```
