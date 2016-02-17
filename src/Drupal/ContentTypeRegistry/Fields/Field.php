@@ -318,14 +318,16 @@ class Field
         if (is_array($this->testData)) {
             // If an index has been requested and that index exists in the array, return that specific item. Otherwise,
             // just return a random array element.
-            if ($index > -1 && isset($this->testData[$index])) {
-                return $this->testData[$index];
-            } else {
-                return $this->testData[array_rand($this->testData)];
+            if (!array_filter(array_keys($this->testData), 'is_string')) {
+                if ($index > -1 && isset($this->testData[$index])) {
+                    return $this->testData[$index];
+                } else {
+                    return $this->testData[array_rand($this->testData)];
+                }
             }
-        } else {
-            return $this->testData;
         }
+
+        return $this->testData;
     }
 
     /**

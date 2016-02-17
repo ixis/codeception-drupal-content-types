@@ -17,12 +17,12 @@ Install using composer, as follows:
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/chriscohen/codeception-drupal-content-types.git"
+            "url": "https://github.com/ixis/codeception-drupal-content-types.git"
         }
     ],
     "require": {
         "codeception/codeception": "2.*",
-        "chriscohen/codeception-drupal-content-types": "dev-master",
+        "ixis/codeception-drupal-content-types": "1.3.*",
     },
 }
 ```
@@ -37,11 +37,7 @@ modules:
 
 ## Configuration
 
-None.
-
-## contentTypes.yml
-
-Put a contentTypes.yml at your test root (unless you want a specific contentTypes.yml for each suite, in which case, see
+Put a **contentTypes.yml** at your test root (unless you want a specific contentTypes.yml for each suite, in which case, see
 below).
 
 Here's an example file:
