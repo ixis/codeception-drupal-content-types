@@ -37,11 +37,7 @@ modules:
 
 ## Configuration
 
-None.
-
-## contentTypes.yml
-
-Put a contentTypes.yml at your test root (unless you want a specific contentTypes.yml for each suite, in which case, see
+Put a **contentTypes.yml** at your test root (unless you want a specific contentTypes.yml for each suite, in which case, see
 below).
 
 Here's an example file:
