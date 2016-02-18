@@ -6,7 +6,6 @@
 
 namespace Codeception\Module\Drupal\ContentTypeRegistry\Widgets;
 
-use Codeception\Actor;
 use Codeception\Exception\Configuration;
 use Codeception\Module\Drupal\ContentTypeRegistry\SuiteSettings;
 
@@ -45,12 +44,12 @@ class MediaBrowserWidget extends MediaWidget
 
         $config = \Codeception\Configuration::suiteSettings(
         // Assuming as we are in AcceptanceHelper we are running the acceptance suite.
-          SuiteSettings::$suiteName,
-          \Codeception\Configuration::config()
+            SuiteSettings::$suiteName,
+            \Codeception\Configuration::config()
         );
 
         if (!isset($config['modules']['config']['WebDriver'])) {
-            throw new Configuration("WebDriver is required for fillFieldWithFileSelectedFromMediaBrowserLibrary()");
+            throw new Configuration("WebDriver is required for MediaBrowserWidget::fill()");
         }
 
         $selector = $this->getSelector();
@@ -72,11 +71,9 @@ class MediaBrowserWidget extends MediaWidget
         $I->waitForElementNotVisible(".ajax-progress");
         $I->click("#media-browser-library-list img");
         $I->click("a.fake-submit");
-        $I->wait(1);
-
         $I->switchToWindow();
 
-        $I->seeElement("$selector div", ["title" => basename($value)]);
+        $fn = basename($value);
+        $I->waitForElement("$selector div[title='$fn']");
     }
 }
-
