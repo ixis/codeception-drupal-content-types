@@ -130,7 +130,7 @@ of the actual naming, so you could give the content type any key you like).
       sensitive. Some fields don't have widgets so just leave it out. Some fields have widgets on the node edit page,
       but have nothing listed on the "manage fields" page. If this is the case, set the widget here, but use
       **widgetNameVisible** below to indicate it's not visible on "manage fields". In these cases you will have to
-      determine the widget for yourself. For example, the node title wigdet is a "Text field" widget even though it
+      determine the widget for yourself. For example, the node title widget is a "Text field" widget even though it
       doesn't say that on the "manage fields" page.
     - **widgetNameVisible** allows you to specify that on the "manage fields" page, this row has nothing in the "widget"
       column. This applies to things like title fields etc.
