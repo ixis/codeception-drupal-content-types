@@ -7,6 +7,7 @@
 namespace Codeception\Module\Drupal\ContentTypeRegistry\EntityTypes;
 
 use Codeception\Module\Drupal\ContentTypeRegistry\Fields\Field;
+use Codeception\Module\Drupal\ContentTypeRegistry\Widgets\TextWidget;
 
 class Node extends EntityType implements EntityTypeInterface
 {
@@ -44,6 +45,7 @@ class Node extends EntityType implements EntityTypeInterface
         $field->setMachine('title');
         $field->setType('Node module element');
         $field->setWidgetNameVisible(false);
+        $field->setWidget(new TextWidget());
 
         return array('Title' => $field);
     }

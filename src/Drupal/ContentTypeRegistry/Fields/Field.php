@@ -181,9 +181,10 @@ class Field
      *
      * @param Widget $widget
      */
-    public function setWidget($widget)
+    public function setWidget(Widget $widget)
     {
         $this->widget = $widget;
+        $this->widget->setField($this);
     }
 
     /**
