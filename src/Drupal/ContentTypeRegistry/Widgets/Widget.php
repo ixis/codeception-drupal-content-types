@@ -65,6 +65,7 @@ abstract class Widget
         'Media file selector'                       => 'MediaWidget',
         'Media browser'                             => 'MediaBrowserWidget',
         'Node module element'                       => 'TextWidget',
+        'OG reference'                              => 'OgReferenceWidget',
         'Path module form elements'                 => 'PathWidget',
         'Poll choices'                              => 'PollChoicesWidget',
         'Poll module settings'                      => 'PollSettingsWidget',
@@ -76,6 +77,7 @@ abstract class Widget
         'Text area (multiple rows)'                 => 'TextAreaWidget',
         'Text field'                                => 'TextWidget',
         'Text area with a summary'                  => 'WysiwygWidget',
+        'User module account form elements.'        => 'UserAccountWidget',
         'Video'                                     => 'VideoWidget',
     );
 

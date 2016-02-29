@@ -51,18 +51,13 @@ GlobalFields:
         selector:       "#edit-body-und-0-value"
         widget:         Text area with a summary
         required:       true
-    title:
-        machineName:    title
-        label:          Title
-        type:           Node module element
-        selector:       "#edit-title"
 ContentTypes:
     news:
+        entityType:   node
         humanName:    News
         machineName:  news
         fields:
             globals:
-                - title
                 - body
             field_image:
                 machineName:    field_image
@@ -113,25 +108,32 @@ is useful if you always want to fill out the published status of a node no matte
 Each content type should be keyed according to its machine name (although this is just a hint as machineName takes care
 of the actual naming, so you could give the content type any key you like).
 
+- **entityType** is the machine name of the Drupal entity type. Mostly node but other types can be used. "node" is
+  assumed unless something else is specified.
 - **humanName** is the way that the content type is named in the UI (and is case-sensitive).
 - **machineName** is the way that the content type is named to Drupal, and should match whatever is set in Drupal.
 - **fields** is a list of all of the fields on the content type, with their properties.
   - **globalFields** is a simple list of the "reused" fields on this type. If your content type has a field that simply
     reuses exactly a field from another content type, set it up in GlobalFields (above) and just reference it here. An
-    exception would be if it had a slight difference, such as when you set a title, but you change its label from
-    "Title" to something else. In this case, it wouldn't be able to be a global field.
+    exception would be if it had a slight difference, such as when you set the same field, but you change its label from
+    "Foo" to something else. In this case, it wouldn't be able to be a global field.
   - **properties**: fields can have the following properties...
     - **machineName** is the machine name of the field as seen by Drupal. In general these will start with field_ but
-      there might be exceptions such as for title and body fields.
+      there might be exceptions such as for body fields.
     - **label** is the human name (label) for this field, and should match exactly what is set in the UI, including case
       sensitivity.
     - **type** is the field type as set in the Drupal UI, on the "manage fields" page. Case-sensitive.
     - **selector** is the CSS or XPath selector used to pick out this field's element where it appears on a node create
       or edit page. Note that this is usually optional and if omitted, will be derived from the field name, which is
       usually enough.
-    - **widget** is the name of the widget for this field as set in the Druapl UI, on the "manage fields" page. Case-
-      sensitive. Some fields don't have widgets (such as title) so just leave it out. There is a list of field types
-      that are exempted from having a widget, so the ContentTypeRegistry will be aware of this.
+    - **widget** is the name of the widget for this field as set in the Drupal UI, on the "manage fields" page. Case-
+      sensitive. Some fields don't have widgets so just leave it out. Some fields have widgets on the node edit page,
+      but have nothing listed on the "manage fields" page. If this is the case, set the widget here, but use
+      **widgetNameVisible** below to indicate it's not visible on "manage fields". In these cases you will have to
+      determine the widget for yourself. For example, the node title wigdet is a "Text field" widget even though it
+      doesn't say that on the "manage fields" page.
+    - **widgetNameVisible** allows you to specify that on the "manage fields" page, this row has nothing in the "widget"
+      column. This applies to things like title fields etc.
     - **required** can be set to "true" if the field is required. If it's not, just leave this out altogether.
     - **pre** can be used to specify an XPath selector for an element that should be clicked before the field is filled.
       If this is set, this element will be clicked and then the field will be filled. If not set, nothing will be
@@ -170,6 +172,24 @@ Example:
 ```yaml
 testData: "special::randomText"
 ```
+
+## Standard default required fields
+
+Each entity type has a set of standard fields that always appear on that entity type. For example, there is always a
+"title" field on the node entity and you have to have it.
+
+Entity types are already aware of what their default fields are, because they are expressed in the
+EntityType::getRequiredFields() method which is provided by each EntityType object.
+
+This means that as long as it's a required field, you don't need to mention it in contentTypes.yml because they are
+already defined. You can mention them in contentTypes.yml if you want to, and those that you mention in there will
+override the defaults.
+
+### Implementing your own standard default required fields
+
+If you have a situation where you have a custom Drupal entity and it has its own required fields, you should define your
+own EntityType subclass and implement the EntityType::getRequiredFields() method to define the required fields there.
+Anything using your custom entity type in contentTypes.yml will automatically pick up these and look for them.
 
 ## Specific widget types
 
@@ -263,6 +283,57 @@ the root tests directory and has a list of the suites it's supposed to run, but 
 the current suite is running. If some way of doing this within Codeception is developed in the future, this extra step
 can be dropped.
 
+## Entity types
+
+Mostly you will want to add fields and types for known entities such as users, taxonomy terms and nodes. But sometimes
+you will need to add further entity types, such as for custom entities you have defined. You will need to create a class
+that extends Codeception\Module\Drupal\ContentTypeRegistry\EntityTypes\EntityType and implements
+Codeception\Module\Drupal\ContentTypeRegistry\EntityTypes\EntityTypeInterface and then you can define the type name and
+also the page on which the "manage fields" is done for this entity type.
+
+### Adding new entity types
+
+If your site has a custom entity type that is not managed within this module's collection of entity types, you can
+create a custom class for it and specify it using the yaml config:
+
+```yaml
+EntityTypes:
+    banana: "Codeception\\MyTestSuite\\EntityTypes\\Banana"
+```
+
+Note that you will need to fully namespace your custom class and use the double backslash notation as shown in the
+example.
+
+Your custom class should extend EntityType and implement EntityTypeInterface. Mostly you can just copy an existing
+entity type subclass and adopt it to suit your needs:
+
+```php
+<?php
+/**
+ * @file
+ * Represents the banana entity type.
+ */
+
+namespace Codeception\MyTestSuite\EntityTypes;
+
+use Codeception\Module\Drupal\ContentTypeRegistry\EntityTypes\EntityType;
+use Codeception\Module\Drupal\ContentTypeRegistry\EntityTypes\EntityTypeInterface;
+
+class Banana extends EntityType implements EntityTypeInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getManageFieldsUrl($bundle = '')
+    {
+        return 'admin/structure/fruit-types/manage/' . $this->getEntityType() . '/fields';
+    }
+}
+```
+
+Don't forget that you will need to make sure this class is loaded within the _bootstrap.php of your product using
+Codeception's autoloading system or by loading it manually with require_once or something.
+
 ## Extras
 
 Sometimes, you will want to simulate the user clicking things on the node edit form that are not actually fields. This
@@ -272,11 +343,11 @@ Here is an example:
 ```yaml
 ContentTypes:
     news:
+        entityType:   node
         humanName:    News
         machineName:  news
         fields:
             globals:
-                - title
                 - body
             field_image:
                 machineName:    field_image

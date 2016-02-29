@@ -77,3 +77,4 @@ class MediaBrowserWidget extends MediaWidget
         $I->waitForElement("$selector div[title='$fn']");
     }
 }
+

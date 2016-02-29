@@ -6,6 +6,7 @@
 
 namespace Codeception\Module\Drupal\ContentTypeRegistry;
 
+use Codeception\Module\Drupal\ContentTypeRegistry\EntityTypes\EntityType;
 use Codeception\Module\Drupal\ContentTypeRegistry\Fields\Field;
 use Codeception\Util\WebInterface;
 
@@ -16,6 +17,13 @@ use Codeception\Util\WebInterface;
  */
 class ContentType
 {
+    /**
+     * The machine-readable entity type of this content type.
+     *
+     * @var EntityType
+     */
+    protected $entityType;
+
     /**
      * The human-readable name of the content type.
      *
@@ -57,6 +65,29 @@ class ContentType
      * @var string
      */
     protected $submitSelector = '#edit-submit';
+
+    /**
+     * Get the entity type.
+     *
+     * @return EntityType
+     */
+    public function getEntityType()
+    {
+        return $this->entityType;
+    }
+
+    /**
+     * Set the entity type.
+     *
+     * This will create a new EntityType subclass by using the shortname in the
+     * parameter provided.
+     *
+     * @param string $entityType
+     */
+    public function setEntityType($entityType)
+    {
+        $this->entityType = EntityType::create($entityType);
+    }
 
     /**
      * Get the content type human name.
@@ -248,10 +279,22 @@ class ContentType
         $contentType->setHumanName($yaml['humanName']);
         $contentType->setMachineName($yaml['machineName']);
 
+        // Set the entity type.
+        if (isset($yaml['entityType'])) {
+            $contentType->setEntityType($yaml['entityType']);
+        } else {
+            // Use node as our default if no entity type is set.
+            $contentType->setEntityType('node');
+        }
+
+        // Set all the required fields for this content type.
+        foreach ($contentType->getEntityType()->getRequiredFields() as $field) {
+            $contentType->setField($field);
+        }
+
         // Set all fields on this content type as defined in the yaml.
         if (isset($yaml['fields'])) {
             foreach ($yaml['fields'] as $key => $fieldData) {
-
                 // The 'globals' key is the old way of writing it instead of 'globalFields' which is maintained for
                 // backwards compatibility.
                 if ($key == 'globals' || $key == 'globalFields') {
@@ -270,13 +313,11 @@ class ContentType
         // Set all extras on this content type as defined in the yaml.
         if (isset($yaml['extras'])) {
             foreach ($yaml['extras'] as $key => $extraData) {
-
                 if ($key == 'globalExtras') {
                     // Handle the list of global extras specially.
                     $extras = Field::parseGlobalFields($extraData, $extras);
                     $contentType->setExtras($extras);
-                }
-                else {
+                } else {
                     $extra = Field::parseYaml($extraData);
                     $contentType->setExtra($extra);
                 }

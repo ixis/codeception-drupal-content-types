@@ -81,6 +81,17 @@ class Field
     protected $postSteps;
 
     /**
+     * Whether the widget name is displayed on the "manage fields" page.
+     *
+     * Some fields, such as node title, have no widget defined, so this shows
+     * an empty cell in the "manage fields" table, even though the widget itself
+     * is present when you edit a node.
+     *
+     * @var bool
+     */
+    protected $widgetNameVisible;
+
+    /**
      * The list of roles that will not be able to see this field and should not attempt to manipulate or fill it.
      *
      * @var string[]
@@ -94,47 +105,6 @@ class Field
      * @var mixed
      */
     protected $testData;
-
-    /**
-     * List of fields with no widget.
-     *
-     * If a field type is listed here, fields of this type on the 'manage
-     * fields' page will be able to get away with having a blank widget.
-     *
-     * @var array
-     */
-    public static $fieldsWithNoWidget = array(
-        'Fieldset containing scheduling settings',
-        'Meta tag module form elements.',
-        'Node module element',
-        'Path module form elements',
-        'Poll choices',
-        'Poll module settings',
-        'Redirect module form elements',
-        'XML sitemap module element',
-    );
-
-    /**
-     * Constructor.
-     *
-     * @param string $machine
-     * @param string $label
-     * @param string $type
-     * @param string $selector
-     * @param string $widget
-     * @param bool $required
-     */
-    public function __construct($machine = '', $label = '', $type = '', $selector = '', $widget = '', $required = false)
-    {
-        $this->machine = $machine;
-        $this->label = $label;
-        $this->type = $type;
-        $this->selector = $selector;
-        $this->widget = $widget;
-
-        // The title field is always required regardless.
-        $this->required = $label == 'Title' ? true : $required;
-    }
 
     /**
      * Gets the field's machine name.
@@ -352,7 +322,27 @@ class Field
      */
     public function hasWidget()
     {
-        return !in_array($this->getType(), static::$fieldsWithNoWidget);
+        return !empty($this->widget);
+    }
+
+    /**
+     * Gets whether the widget name is visible for this field.
+     *
+     * @return bool
+     */
+    public function getWidgetNameVisible()
+    {
+        return $this->widgetNameVisible;
+    }
+
+    /**
+     * Sets whether the widget name is visible for this field.
+     *
+     * @param bool $widgetNameVisible
+     */
+    public function setWidgetNameVisible($widgetNameVisible)
+    {
+        $this->widgetNameVisible = $widgetNameVisible;
     }
 
     /**
@@ -377,9 +367,14 @@ class Field
         }
         if (isset($yaml['type'])) {
             $field->setType($yaml['type']);
-            $field->setWidget(Widget::create($yaml, $field));
+
+            // Only set a widget if one was defined because some fields don't
+            // have anything visible to the user on the edit form.
+            if (isset($yaml['widget'])) {
+                $field->setWidget(Widget::create($yaml, $field));
+            }
         }
-        if (isset($yaml['selector'])) {
+        if (isset($yaml['selector']) && $field->getWidget()) {
             $field->getWidget()->setSelector($yaml['selector']);
         }
         if (isset($yaml['required']) && $yaml['required'] !== false) {
@@ -406,6 +401,14 @@ class Field
             $field->setTestData($yaml['testData']);
         }
 
+        // Only set the widgetNameVisible property to false if the YAML value is
+        // set and also it's specifically set to false.
+        if (isset($yaml['widgetNameVisible']) && $yaml['widgetNameVisible'] === false) {
+            $field->setWidgetNameVisible(false);
+        } else {
+            $field->setWidgetNameVisible(true);
+        }
+
         return $field;
     }
 
@@ -420,8 +423,8 @@ class Field
      * @param Field[] $fields
      *   Global fields as derived from ContentTypeRegistryStorageInterface->loadGlobalFields().
      *
-     * @return array
-     *   Collection of global fields.
+     * @return Field[]
+     *   A collection of global fields.
      *
      * @throws ConfigurationException
      *   If global field does not exist.
