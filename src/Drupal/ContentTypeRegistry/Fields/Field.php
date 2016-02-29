@@ -470,6 +470,16 @@ class Field
             return;
         }
 
+        if (!$this->hasWidget()) {
+            throw new \RuntimeException(
+                sprintf(
+                    "Unable to fill field %s (%s) as it has no widget",
+                    $this->getLabel(),
+                    $this->getMachine()
+                )
+            );
+        }
+
         // Run any number of steps before filling the field.
         if (isset($this->preSteps)) {
             $this->executeSteps(
