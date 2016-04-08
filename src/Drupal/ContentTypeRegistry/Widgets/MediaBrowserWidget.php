@@ -43,9 +43,13 @@ class MediaBrowserWidget extends MediaWidget
 
         $selector = $this->getSelector();
 
-        if (!preg_match('/^#[\w\-]+\-upload$/', $selector)) {
-            throw new \InvalidArgumentException("Must specify the input[@type='file'] field, ending in -upload");
+        if (!preg_match('/^#edit\-([\w\-]+)\-upload$/', $selector, $matches)) {
+            throw new \InvalidArgumentException(
+                "Must specify the input field, beginning with edit- and ending in -upload"
+            );
         }
+
+        $form_item_selector = ".form-item-" . $matches[1];
 
         $button = str_replace("-upload", "-browse-button", $selector);
         $I->click($button);
@@ -64,6 +68,6 @@ class MediaBrowserWidget extends MediaWidget
         $I->switchToWindow();
 
         $fn = basename($value);
-        $I->waitForElement("$selector div[title='$fn']");
+        $I->waitForElement("$form_item_selector div[title='$fn']");
     }
 }
