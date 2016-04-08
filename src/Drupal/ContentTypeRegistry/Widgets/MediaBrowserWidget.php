@@ -60,8 +60,8 @@ class MediaBrowserWidget extends MediaWidget
 
         $button = str_replace("-upload", "-browse-button", $selector);
         $I->click($button);
-        $I->waitForElementVisible("iframe");
-        $I->executeJS("document.getElementsByTagName('iframe')[0].name = 'tmp'");
+        $I->waitForElementVisible("#mediaBrowser");
+        $I->executeJS("document.getElementById('mediaBrowser').name = 'tmp'");
         $I->switchToIFrame("tmp");
         $I->click("//a[@title='Library']");
         $I->waitForElement("#edit-filename");
