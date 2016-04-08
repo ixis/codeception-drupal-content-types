@@ -6,9 +6,6 @@
 
 namespace Codeception\Module\Drupal\ContentTypeRegistry\Widgets;
 
-use Codeception\Exception\Configuration;
-use Codeception\Module\Drupal\ContentTypeRegistry\SuiteSettings;
-
 /**
  * Class MediaBrowserWidget
  *
@@ -30,11 +27,9 @@ class MediaBrowserWidget extends MediaWidget
      * This will search for a file in the media browser library and attach it.
      *
      * @param Actor $I
+     *   The Actor.
      * @param string $value
      *   The file name to select.
-     *
-     * @throws Configuration
-     *   If WebDriver is not in use.
      */
     public function fill($I, $value)
     {
@@ -42,14 +37,8 @@ class MediaBrowserWidget extends MediaWidget
             return;
         }
 
-        $config = \Codeception\Configuration::suiteSettings(
-        // Assuming as we are in AcceptanceHelper we are running the acceptance suite.
-            SuiteSettings::$suiteName,
-            \Codeception\Configuration::config()
-        );
-
-        if (!isset($config['modules']['config']['WebDriver'])) {
-            throw new Configuration("WebDriver is required for MediaBrowserWidget::fill()");
+        if (!method_exists($I, "waitForElementVisible")) {
+            throw new \RuntimeException("WebDriver is required for MediaBrowserWidget::fill()");
         }
 
         $selector = $this->getSelector();
