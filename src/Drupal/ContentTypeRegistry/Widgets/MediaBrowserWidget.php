@@ -45,7 +45,7 @@ class MediaBrowserWidget extends MediaWidget
 
         if (!preg_match('/^#edit\-([\w\-]+)\-upload$/', $selector, $matches)) {
             throw new \InvalidArgumentException(
-                "Must specify the input field, beginning with edit- and ending in -upload"
+                "Must specify the input field, beginning with '#edit-' and ending in '-upload'."
             );
         }
 
