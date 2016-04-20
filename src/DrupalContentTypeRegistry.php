@@ -194,6 +194,9 @@ class DrupalContentTypeRegistry extends Module
             }
         }
 
+        // On mobile resolutions, clicking the submit button does not do anything
+        // unless it is in view first.
+        $I->executeJS("document.querySelector('".$contentType->getSubmitSelector()."').scrollIntoView(true)");
         // Submit the node.
         $I->click($contentType->getSubmitSelector());
 
