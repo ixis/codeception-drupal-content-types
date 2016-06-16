@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "chriscohen/codeception-drupal-pages": "dev-master"
+    "ixis/codeception-drupal-pages": "~0.1"
   },
   "extra": {
       "branch-alias": {
